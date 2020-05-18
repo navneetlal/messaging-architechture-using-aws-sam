@@ -49,6 +49,34 @@ Resources:
       TopicArn:
         Ref: FirstSNSTopic
 
+  SQSQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties: 
+      PolicyDocument: {
+        "Version": "2012-10-17",
+        "Statement": [
+          {
+            "Effect": "Allow",
+            "Principal": {
+              "AWS": "*"
+            },
+            "Action": "SQS:SendMessage",
+            "Resource": {
+              "Fn::GetAtt": ["FirstSQSQueue", "Arn"]
+            },
+            "Condition": {
+              "ArnEquals": {
+                "aws:SourceArn": {
+                  "Ref": "FirstSNSTopic"
+                }
+              }
+            }
+          }
+        ]
+      }
+      Queues: 
+        - Ref: FirstSQSQueue
+
 Outputs:
   SNSTopicARN:
     Description: ARN of the SNS Topic
